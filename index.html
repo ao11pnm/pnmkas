@@ -3,702 +3,445 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Mekaar AO - Simpel</title>
     
-    <!-- UBAH NAMA APLIKASI DI TAB BROWSER PADA BARIS DI BAWAH INI -->
-    <title>Mekaar AO</title>
-    
-    <!-- Memuat Tailwind CSS & FontAwesome -->
+    <!-- Tailwind CSS & FontAwesome -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     
-    <!-- Konfigurasi Tema Tailwind -->
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: { sans: ['Inter', 'sans-serif'] },
-                    colors: {
-                        corporate: {
-                            50: '#eff6ff',
-                            100: '#dbeafe',
-                            500: '#3b82f6',
-                            600: '#2563eb',
-                            700: '#1d4ed8',
-                            900: '#1e3a8a',
-                        }
-                    }
-                }
-            }
-        }
-    </script>
-    
-    <!-- CSS Kustom untuk Transisi dan Scrollbar -->
     <style>
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-        
-        .view-section { display: none; opacity: 0; transition: opacity 0.3s ease; }
-        .view-section.active { display: flex; opacity: 1; }
-
-        /* Animasi Modal */
-        .modal-enter { opacity: 1; transform: scale(1); }
-        .modal-leave { opacity: 0; transform: scale(0.95); pointer-events: none; }
+        .view-section { display: none; }
+        .view-section.active { display: flex; }
     </style>
 </head>
-<body class="bg-gray-100 font-sans text-gray-800 antialiased h-screen overflow-hidden flex justify-center">
+<body class="bg-slate-200 text-slate-800 font-sans h-screen overflow-hidden flex justify-center">
 
-    <!-- Kontainer Pembatas Tampilan Mobile -->
-    <main class="w-full max-w-md bg-gray-50 h-full relative shadow-2xl flex flex-col overflow-hidden">
+    <main class="w-full max-w-md bg-white h-full relative flex flex-col overflow-hidden shadow-lg">
 
         <!-- VIEW 1: DASHBOARD -->
-        <section id="view-dashboard" class="view-section active flex-col h-full w-full relative">
+        <section id="view-dashboard" class="view-section active flex-col h-full w-full">
             
-            <!-- Header Dashboard -->
-            <header class="bg-corporate-700 text-white px-5 py-6 rounded-b-3xl shadow-lg z-10">
-                <div class="flex justify-between items-center mb-5">
-                    <div class="flex items-center gap-3">
-                        <div class="w-12 h-12 bg-white/20 rounded-xl flex justify-center items-center backdrop-blur-sm">
-                            <i class="fa-solid fa-briefcase text-2xl"></i>
-                        </div>
-                        <div>
-                            <!-- UBAH NAMA APLIKASI PADA HEADER UTAMA DI BAWAH INI -->
-                            <h1 class="text-xl font-bold leading-tight">Mekaar AO</h1>
-                            <p class="text-xs text-corporate-100 opacity-90">Sistem Operasional Lapangan</p>
-                        </div>
+            <!-- Header -->
+            <header class="bg-blue-600 text-white p-5">
+                <div class="flex justify-between items-center mb-4">
+                    <div>
+                        <h1 class="text-xl font-bold">Yobell</h1>
+                        <p class="text-xs text-blue-200">Data Kelompok</p>
                     </div>
-                    <div class="w-10 h-10 rounded-full bg-corporate-900 border-2 border-corporate-400 flex justify-center items-center shadow-inner">
-                        <i class="fa-solid fa-user-tie text-sm"></i>
-                    </div>
+                    <i class="fa-solid fa-user-circle text-3xl"></i>
                 </div>
-
-                <!-- Kolom Pencarian -->
                 <div class="relative">
-                    <i class="fa-solid fa-search absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
-                    <input type="text" id="search-input" placeholder="Cari Kelompok atau Nasabah..." 
-                           class="w-full bg-white text-gray-800 rounded-2xl py-3.5 pl-12 pr-4 text-sm focus:outline-none focus:ring-4 focus:ring-corporate-500/30 shadow-inner transition-all">
+                    <i class="fa-solid fa-search absolute left-3 top-3 text-slate-400"></i>
+                    <input type="text" id="search-input" placeholder="Cari Kelompok / Nasabah..." class="w-full bg-white text-slate-800 rounded-lg py-2.5 pl-10 pr-4 text-sm focus:outline-none">
                 </div>
             </header>
 
-            <!-- Filter Jadwal (Chips) -->
-            <div class="px-5 py-4 z-10 bg-gray-50">
-                <h2 class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">Jadwal PKM</h2>
-                <div class="flex gap-2.5 overflow-x-auto no-scrollbar pb-2" id="day-filters">
-                    <!-- Tombol Hari akan digenerate oleh JavaScript -->
-                </div>
+            <!-- Filter Chips -->
+            <div class="p-4 border-b">
+                <div class="flex gap-2 overflow-x-auto no-scrollbar" id="day-filters"></div>
             </div>
 
-            <!-- Daftar Kelompok -->
-            <div class="flex-1 overflow-y-auto px-5 pb-28 no-scrollbar" id="group-list-container">
-                <!-- Data Kelompok dari JS -->
-            </div>
+            <!-- Group List -->
+            <div class="flex-1 overflow-y-auto p-4 pb-24" id="group-list-container"></div>
 
-            <!-- Tombol Tambah Kelompok Bawah (Sticky) -->
-            <div class="absolute bottom-0 left-0 w-full bg-white border-t border-gray-200 p-4 pb-6 shadow-[0_-10px_15px_-3px_rgba(0,0,0,0.05)] z-20">
-                <button onclick="openAddGroupModal()" class="w-full bg-corporate-600 hover:bg-corporate-700 text-white font-bold text-base py-4 rounded-xl shadow-lg active:scale-[0.98] transition-transform flex justify-center items-center gap-2">
-                    <i class="fa-solid fa-layer-group"></i> Tambah Kelompok Baru
+            <!-- Sticky Add Button -->
+            <div class="absolute bottom-0 w-full bg-white border-t p-4">
+                <button onclick="openAddGroupModal()" class="w-full bg-blue-600 text-white font-bold py-3 rounded-lg active:bg-blue-700">
+                    + Tambah Kelompok
                 </button>
             </div>
         </section>
 
-        <!-- VIEW 2: FORM TRANSAKSI -->
-        <section id="view-transaction" class="view-section flex-col h-full bg-gray-50 relative w-full">
+        <!-- VIEW 2: TRANSAKSI -->
+        <section id="view-transaction" class="view-section flex-col h-full w-full bg-slate-50">
             
-            <!-- Header Navigasi Transaksi -->
-            <header class="bg-white border-b border-gray-200 px-4 py-4 flex items-center justify-between sticky top-0 z-20 shadow-sm">
+            <!-- Header -->
+            <header class="bg-white border-b p-4 flex items-center justify-between sticky top-0 z-10">
                 <div class="flex items-center gap-3">
-                    <button onclick="closeTransaction()" class="w-10 h-10 rounded-full hover:bg-gray-100 flex items-center justify-center text-gray-600 transition active:scale-95">
-                        <i class="fa-solid fa-arrow-left text-lg"></i>
-                    </button>
+                    <button onclick="closeTransaction()" class="text-slate-600 p-2"><i class="fa-solid fa-arrow-left"></i></button>
                     <div>
                         <div class="flex items-center gap-2">
-                            <h2 class="text-lg font-bold text-gray-800" id="tx-group-name">Nama Kelompok</h2>
-                            <button onclick="openEditNameModal()" class="w-7 h-7 bg-corporate-50 hover:bg-corporate-100 text-corporate-600 rounded-full flex items-center justify-center transition active:scale-90" title="Ubah Nama Kelompok">
-                                <i class="fa-solid fa-pen text-xs"></i>
-                            </button>
+                            <h2 class="font-bold text-lg" id="tx-group-name">Nama Kelompok</h2>
+                            <button onclick="openEditNameModal()" class="text-blue-500 text-xs p-1"><i class="fa-solid fa-pen"></i></button>
+                            <button onclick="confirmDeleteGroup()" class="text-red-500 text-xs p-1"><i class="fa-solid fa-trash"></i></button>
                         </div>
-                        <p class="text-xs font-medium text-corporate-600">Jadwal: <span id="tx-group-day" class="font-bold">Hari</span></p>
+                        <p class="text-xs text-slate-500" id="tx-group-day">Hari</p>
                     </div>
                 </div>
             </header>
 
-            <!-- Panel Total Setoran (Real-time) -->
-            <div class="bg-corporate-900 text-white px-5 py-4 shadow-md z-10 flex justify-between items-center">
-                <div>
-                    <p class="text-xs text-corporate-100 opacity-80 uppercase tracking-wider font-semibold">Total Terkumpul</p>
-                    <h3 class="text-2xl font-bold font-mono" id="tx-total-collected">Rp 0</h3>
-                </div>
-                <div class="bg-white/20 p-2 rounded-lg backdrop-blur-sm">
-                    <i class="fa-solid fa-sack-dollar text-xl text-yellow-300"></i>
-                </div>
+            <!-- Total Bar -->
+            <div class="bg-slate-800 text-white p-4 flex justify-between items-center">
+                <span class="text-sm font-semibold">Total Terkumpul</span>
+                <span class="text-xl font-bold" id="tx-total-collected">Rp 0</span>
             </div>
 
-            <!-- Daftar Form Nasabah per Individu -->
-            <div class="flex-1 overflow-y-auto px-4 pt-4 pb-40 no-scrollbar relative">
-                
-                <!-- Tombol Tambah Nasabah -->
-                <button onclick="openAddCustomerModal()" class="w-full bg-blue-100 hover:bg-blue-200 text-corporate-700 border-2 border-dashed border-corporate-300 rounded-xl py-3 mb-4 font-semibold text-sm flex justify-center items-center gap-2 transition active:scale-[0.98]">
-                    <i class="fa-solid fa-user-plus"></i> Tambah Nasabah Baru
+            <!-- Member List -->
+            <div class="flex-1 overflow-y-auto p-4 pb-24">
+                <button onclick="openAddCustomerModal()" class="w-full border-2 border-dashed border-blue-300 text-blue-600 font-semibold py-3 rounded-lg mb-4">
+                    + Tambah Nasabah
                 </button>
-
-                <div id="tx-member-list">
-                    <!-- Form Input Nasabah di-generate oleh JS -->
-                </div>
+                <div id="tx-member-list"></div>
             </div>
 
-            <!-- Tombol Aksi Bawah (Sticky) -->
-            <div class="absolute bottom-0 left-0 w-full bg-white border-t border-gray-200 p-4 pb-6 shadow-[0_-10px_15px_-3px_rgba(0,0,0,0.05)] z-20">
-                <button onclick="saveTransaction()" class="w-full bg-corporate-600 hover:bg-corporate-700 text-white font-bold text-base py-4 rounded-xl shadow-lg active:scale-[0.98] transition-transform flex justify-center items-center gap-2">
-                    <i class="fa-solid fa-cloud-arrow-up"></i> Simpan Laporan Transaksi
+            <!-- Sticky Save Button -->
+            <div class="absolute bottom-0 w-full bg-white border-t p-4">
+                <button onclick="saveTransaction()" class="w-full bg-blue-600 text-white font-bold py-3 rounded-lg active:bg-blue-700">
+                    Simpan Data
                 </button>
             </div>
         </section>
 
     </main>
 
-    <!-- Modal 1: Edit Nama Kelompok -->
-    <div id="modal-edit-group" class="fixed inset-0 bg-black/60 z-50 flex flex-col justify-center items-center px-4 backdrop-blur-sm opacity-0 pointer-events-none transition-all duration-300">
-        <div class="bg-white p-6 rounded-3xl w-full max-w-sm shadow-2xl transform scale-95 transition-transform duration-300" id="modal-edit-group-content">
-            <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
-                <i class="fa-solid fa-users-gear text-corporate-500"></i> Ubah Nama Kelompok
-            </h3>
-            <input type="text" id="input-edit-group" class="w-full bg-gray-50 border border-gray-300 rounded-xl px-4 py-3.5 text-sm focus:outline-none focus:border-corporate-500 focus:ring-2 focus:ring-corporate-200 mb-6 font-semibold" placeholder="Nama Kelompok Baru">
-            <div class="flex gap-3">
-                <button onclick="closeModal('modal-edit-group')" class="flex-1 bg-gray-100 text-gray-600 font-bold py-3.5 rounded-xl hover:bg-gray-200 transition">Batal</button>
-                <button onclick="saveGroupName()" class="flex-1 bg-corporate-600 text-white font-bold py-3.5 rounded-xl hover:bg-corporate-700 transition">Simpan</button>
+    <!-- KUMPULAN MODAL -->
+    <div id="modal-container" class="hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-xl w-full max-w-sm p-5 shadow-lg relative">
+            <button onclick="closeModal()" class="absolute right-4 top-4 text-slate-400"><i class="fa-solid fa-times"></i></button>
+            <h3 class="font-bold text-lg mb-4" id="modal-title">Judul Modal</h3>
+            <div id="modal-body" class="mb-5"></div>
+            <div class="flex gap-2">
+                <button onclick="closeModal()" class="flex-1 bg-slate-200 text-slate-700 font-bold py-2.5 rounded-lg">Batal</button>
+                <button id="modal-action-btn" class="flex-1 bg-blue-600 text-white font-bold py-2.5 rounded-lg">Simpan</button>
             </div>
         </div>
     </div>
 
-    <!-- Modal 2: Edit Data Nasabah -->
-    <div id="modal-edit-customer" class="fixed inset-0 bg-black/60 z-50 flex flex-col justify-center items-center px-4 backdrop-blur-sm opacity-0 pointer-events-none transition-all duration-300">
-        <div class="bg-white p-6 rounded-3xl w-full max-w-sm shadow-2xl transform scale-95 transition-transform duration-300" id="modal-edit-customer-content">
-            <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
-                <i class="fa-solid fa-user-pen text-corporate-500"></i> Edit Profil Nasabah
-            </h3>
-            <input type="hidden" id="input-edit-customer-id">
-            
-            <div class="mb-4">
-                <label class="block text-xs font-bold text-gray-500 uppercase mb-1.5">Nama Nasabah</label>
-                <input type="text" id="input-edit-customer-name" class="w-full bg-gray-50 border border-gray-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-corporate-500 focus:ring-2 focus:ring-corporate-200 font-semibold">
-            </div>
-            
-            <div class="mb-6">
-                <label class="block text-xs font-bold text-gray-500 uppercase mb-1.5 flex justify-between">
-                    Catatan / Ciri Khas <span class="text-gray-400 font-normal lowercase">(Opsional)</span>
-                </label>
-                <textarea id="input-edit-customer-notes" rows="3" class="w-full bg-gray-50 border border-gray-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-corporate-500 focus:ring-2 focus:ring-corporate-200" placeholder="Contoh: Ibu yang jualan warung kelontong, rumah pagar biru..."></textarea>
-            </div>
-
-            <div class="flex gap-3">
-                <button onclick="closeModal('modal-edit-customer')" class="flex-1 bg-gray-100 text-gray-600 font-bold py-3.5 rounded-xl hover:bg-gray-200 transition">Batal</button>
-                <button onclick="saveCustomerData()" class="flex-1 bg-corporate-600 text-white font-bold py-3.5 rounded-xl hover:bg-corporate-700 transition">Simpan</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal 3: Tambah Nasabah Baru -->
-    <div id="modal-add-customer" class="fixed inset-0 bg-black/60 z-50 flex flex-col justify-center items-center px-4 backdrop-blur-sm opacity-0 pointer-events-none transition-all duration-300">
-        <div class="bg-white p-6 rounded-3xl w-full max-w-sm shadow-2xl transform scale-95 transition-transform duration-300" id="modal-add-customer-content">
-            <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
-                <i class="fa-solid fa-user-plus text-corporate-500"></i> Registrasi Nasabah
-            </h3>
-            
-            <div class="mb-3">
-                <label class="block text-xs font-bold text-gray-500 uppercase mb-1.5">Nama Lengkap</label>
-                <input type="text" id="input-add-name" class="w-full bg-gray-50 border border-gray-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-corporate-500 focus:ring-2 focus:ring-corporate-200 font-semibold" placeholder="Masukkan nama...">
-            </div>
-
-            <div class="mb-3">
-                <label class="block text-xs font-bold text-gray-500 uppercase mb-1.5">Nominal Tagihan Wajib (Rp)</label>
-                <input type="number" id="input-add-nominal" class="w-full bg-gray-50 border border-gray-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-corporate-500 focus:ring-2 focus:ring-corporate-200 font-semibold" placeholder="Contoh: 50000" min="0">
-            </div>
-            
-            <div class="mb-6">
-                <label class="block text-xs font-bold text-gray-500 uppercase mb-1.5">Catatan / Profil Usaha</label>
-                <textarea id="input-add-notes" rows="2" class="w-full bg-gray-50 border border-gray-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-corporate-500 focus:ring-2 focus:ring-corporate-200" placeholder="Tulis catatan pendek..."></textarea>
-            </div>
-
-            <div class="flex gap-3">
-                <button onclick="closeModal('modal-add-customer')" class="flex-1 bg-gray-100 text-gray-600 font-bold py-3.5 rounded-xl hover:bg-gray-200 transition">Batal</button>
-                <button onclick="saveNewCustomer()" class="flex-1 bg-corporate-600 text-white font-bold py-3.5 rounded-xl hover:bg-corporate-700 transition">Tambah</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal 5: Tambah Kelompok Baru -->
-    <div id="modal-add-group" class="fixed inset-0 bg-black/60 z-50 flex flex-col justify-center items-center px-4 backdrop-blur-sm opacity-0 pointer-events-none transition-all duration-300">
-        <div class="bg-white p-6 rounded-3xl w-full max-w-sm shadow-2xl transform scale-95 transition-transform duration-300" id="modal-add-group-content">
-            <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
-                <i class="fa-solid fa-users text-corporate-500"></i> Buat Kelompok Baru
-            </h3>
-            
-            <div class="mb-4">
-                <label class="block text-xs font-bold text-gray-500 uppercase mb-1.5">Nama Kelompok</label>
-                <input type="text" id="input-add-group-name" class="w-full bg-gray-50 border border-gray-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-corporate-500 focus:ring-2 focus:ring-corporate-200 font-semibold" placeholder="Contoh: Mawar Merah">
-            </div>
-
-            <div class="mb-6">
-                <label class="block text-xs font-bold text-gray-500 uppercase mb-1.5">Hari Pertemuan (PKM)</label>
-                <div class="relative">
-                    <select id="input-add-group-day" class="w-full bg-gray-50 border border-gray-300 rounded-xl px-4 py-3 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-corporate-500 appearance-none">
-                        <option value="Senin">Senin</option>
-                        <option value="Selasa">Selasa</option>
-                        <option value="Rabu">Rabu</option>
-                        <option value="Kamis">Kamis</option>
-                    </select>
-                    <i class="fa-solid fa-chevron-down absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 text-xs pointer-events-none"></i>
-                </div>
-            </div>
-
-            <div class="flex gap-3">
-                <button onclick="closeModal('modal-add-group')" class="flex-1 bg-gray-100 text-gray-600 font-bold py-3.5 rounded-xl hover:bg-gray-200 transition">Batal</button>
-                <button onclick="saveNewGroup()" class="flex-1 bg-corporate-600 text-white font-bold py-3.5 rounded-xl hover:bg-corporate-700 transition">Simpan</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal 4: Alert Sukses -->
-    <div id="modal-success" class="fixed inset-0 bg-black/60 z-50 flex flex-col justify-center items-center px-4 backdrop-blur-sm opacity-0 pointer-events-none transition-all duration-300">
-        <div class="bg-white p-6 rounded-3xl w-full max-w-sm text-center shadow-2xl transform scale-95 transition-transform duration-300" id="modal-success-content">
-            <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-5 border-4 border-white shadow-sm transform -mt-12">
-                <i class="fa-solid fa-check text-4xl text-green-500"></i>
-            </div>
-            <h3 class="text-xl font-bold text-gray-800 mb-2">Tersimpan!</h3>
-            <p class="text-sm text-gray-500 mb-6">Data setoran PKM telah berhasil disinkronisasi ke server pusat.</p>
-            <button onclick="closeSuccessAlert()" class="w-full bg-corporate-600 text-white font-bold py-3.5 rounded-xl hover:bg-corporate-700 transition active:scale-95">
-                Selesai & Kembali
-            </button>
-        </div>
-    </div>
-
+    <!-- JAVASCRIPT LOGIC -->
     <script>
-        // 1. Database Dummy (State Utama)
-        let mockData = [
+        const defaultData = [
             {
-                id: 'KLP-1001', nama_kelompok: 'Mawar Merah', hari_pkm: 'Senin',
+                id: 'KLP-9999', nama_kelompok: 'KDBG putat 2', hari_pkm: 'Senin',
                 nasabah: [
-                    { id: 'N-101', nama: 'Siti Aminah', angsuran_wajib: 50000, catatan: 'Ibu penjual gorengan pinggir jalan.', status: 'Hadir' },
-                    { id: 'N-102', nama: 'Nurhayati', angsuran_wajib: 50000, catatan: '', status: 'Hadir' },
-                    { id: 'N-103', nama: 'Karsini', angsuran_wajib: 75000, catatan: 'Rumah cat hijau dekat masjid.', status: 'Hadir' },
+                    { id: 'N-901', nama: 'DAILAH BINTI RUSWAD', angsuran_wajib: 191000, catatan: '', status: '1. Bayar' },
+                    { id: 'N-902', nama: 'WIWI LISTIYANA BINTI SUHANA', angsuran_wajib: 10000, catatan: '', status: '1. Bayar' },
+                    { id: 'N-903', nama: 'NOKTITI BINTI KASMUDI', angsuran_wajib: 150000, catatan: '', status: '1. Bayar' },
+                    { id: 'N-904', nama: 'ENI MASRUROH BINTI SARKO', angsuran_wajib: 215000, catatan: '', status: '1. Bayar' },
+                    { id: 'N-905', nama: 'SITI QOMARIYAH BINTI DARYONO', angsuran_wajib: 825000, catatan: '', status: '1. Bayar' },
+                    { id: 'N-906', nama: 'WARNINGSIH BINTI DARYONO', angsuran_wajib: 125000, catatan: '', status: '1. Bayar' },
+                    { id: 'N-907', nama: 'NURIAH BINTI CARIWAN', angsuran_wajib: 30000, catatan: '', status: '1. Bayar' },
+                    { id: 'N-908', nama: 'MUNETI BINTI TURWAN', angsuran_wajib: 0, catatan: '', status: '1. Bayar' },
+                    { id: 'N-909', nama: 'NURITAH BINTI TARWIN', angsuran_wajib: 238000, catatan: '', status: '1. Bayar' },
+                    { id: 'N-910', nama: 'SRI MULYATI BINTI SUTARMO', angsuran_wajib: 75000, catatan: '', status: '1. Bayar' },
+                    { id: 'N-911', nama: 'SUARTI BINTI SUKYAD', angsuran_wajib: 0, catatan: '', status: '1. Bayar' },
+                    { id: 'N-912', nama: 'WANITAH BINTI FATKHURI', angsuran_wajib: 191000, catatan: '', status: '1. Bayar' },
+                    { id: 'N-913', nama: 'SANIPAH BINTI DARMAD', angsuran_wajib: 215000, catatan: '', status: '1. Bayar' },
+                    { id: 'N-914', nama: 'SUSIYATI BINTI JAETUN', angsuran_wajib: 10100, catatan: '', status: '1. Bayar' },
+                    { id: 'N-915', nama: 'KOMISAH BINTI KASTARI', angsuran_wajib: 243000, catatan: '', status: '1. Bayar' },
+                    { id: 'N-916', nama: 'KOIMAH BINTI RASBIN', angsuran_wajib: 191000, catatan: '', status: '1. Bayar' },
+                    { id: 'N-917', nama: 'WAITOH BINTI SAHID', angsuran_wajib: 191000, catatan: '', status: '1. Bayar' },
+                    { id: 'N-918', nama: 'WAHYUNI YUNI WIDIYANTI BINTI ROBIN', angsuran_wajib: 191000, catatan: '', status: '1. Bayar' },
+                    { id: 'N-919', nama: 'KAMILAH BINTI SAHID', angsuran_wajib: 175000, catatan: '', status: '1. Bayar' },
+                    { id: 'N-920', nama: 'KASTIMAH BINTI SUPRIADI', angsuran_wajib: 175000, catatan: '', status: '1. Bayar' }
                 ]
             },
             {
-                id: 'KLP-1002', nama_kelompok: 'Melati Suci', hari_pkm: 'Senin',
+                id: 'KLP-1001', nama_kelompok: 'KDBG putat 3', hari_pkm: 'Senin',
                 nasabah: [
-                    { id: 'N-201', nama: 'Budiarti', angsuran_wajib: 100000, catatan: 'Usaha warung sembako.', status: 'Hadir' },
-                    { id: 'N-202', nama: 'Sumiati', angsuran_wajib: 50000, catatan: '', status: 'Izin' },
+                    { id: 'N-101', nama: 'Siti Aminah', angsuran_wajib: 50000, catatan: 'Ibu penjual gorengan pinggir jalan.', status: '1. Bayar' },
+                    { id: 'N-102', nama: 'Nurhayati', angsuran_wajib: 50000, catatan: '', status: '1. Bayar' },
+                    { id: 'N-103', nama: 'Karsini', angsuran_wajib: 75000, catatan: 'Rumah cat hijau dekat masjid.', status: '1. Bayar' },
                 ]
             },
             {
-                id: 'KLP-2001', nama_kelompok: 'Kenanga Indah', hari_pkm: 'Selasa',
+                id: 'KLP-1002', nama_kelompok: 'KDBG putat', hari_pkm: 'Senin',
                 nasabah: [
-                    { id: 'N-301', nama: 'Ratna', angsuran_wajib: 60000, catatan: 'Sering lupa bawa buku tabungan.', status: 'Hadir' },
-                    { id: 'N-302', nama: 'Desi', angsuran_wajib: 60000, catatan: '', status: 'Hadir' },
+                    { id: 'N-201', nama: 'Budiarti', angsuran_wajib: 100000, catatan: '.', status: '1. Bayar' },
+                    { id: 'N-202', nama: 'Sumiati', angsuran_wajib: 50000, catatan: '', status: '2. par' },
+                ]
+            },
+            { id: 'KLP-1003', nama_kelompok: 'karang lo 2', hari_pkm: 'Senin', nasabah: [] },
+            { id: 'KLP-1004', nama_kelompok: 'KDBG mda', hari_pkm: 'Senin', nasabah: [] },
+            { id: 'KLP-1005', nama_kelompok: 'Kdbg MDA 2', hari_pkm: 'Senin', nasabah: [] },
+            {
+                id: 'KLP-2001', nama_kelompok: 'KARANG LO', hari_pkm: 'Senin',
+                nasabah: [
+                    { id: 'N-301', nama: 'Ratna', angsuran_wajib: 60000, catatan: 'Sering lupa bawa buku tabungan.', status: '1. Bayar' },
+                    { id: 'N-302', nama: 'Desi', angsuran_wajib: 60000, catatan: '', status: '1. Bayar' },
                 ]
             },
             {
                 id: 'KLP-3001', nama_kelompok: 'Anggrek Bulan', hari_pkm: 'Rabu',
                 nasabah: [
-                    { id: 'N-401', nama: 'Wati', angsuran_wajib: 150000, catatan: 'Ketua Kelompok yang tegas.', status: 'Hadir' },
-                    { id: 'N-402', nama: 'Rina', angsuran_wajib: 150000, catatan: '', status: 'Sakit' },
+                    { id: 'N-401', nama: 'Wati', angsuran_wajib: 150000, catatan: 'Ketua Kelompok yang tegas.', status: '1. Bayar' },
+                    { id: 'N-402', nama: 'Rina', angsuran_wajib: 150000, catatan: '', status: '3. Belum Angsuran' },
                 ]
             },
             {
                 id: 'KLP-4001', nama_kelompok: 'Teratai Mekar', hari_pkm: 'Kamis',
                 nasabah: [
-                    { id: 'N-501', nama: 'Juminten', angsuran_wajib: 40000, catatan: '', status: 'Hadir' },
-                    { id: 'N-502', nama: 'Tuminah', angsuran_wajib: 40000, catatan: 'Ibu pembuat tempe.', status: 'Hadir' },
-                    { id: 'N-503', nama: 'Suparti', angsuran_wajib: 80000, catatan: '', status: 'Alpa' },
+                    { id: 'N-501', nama: 'Juminten', angsuran_wajib: 40000, catatan: '', status: '1. Bayar' },
+                    { id: 'N-502', nama: 'Tuminah', angsuran_wajib: 40000, catatan: 'Ibu pembuat tempe.', status: '1. Bayar' },
+                    { id: 'N-503', nama: 'Suparti', angsuran_wajib: 80000, catatan: '', status: '3. Belum Angsuran' },
                 ]
-            }
+            },
+            // Kelompok Baru Hari Kamis
+            { id: 'KLP-5001', nama_kelompok: 'Tonggara Slawi', hari_pkm: 'Kamis', nasabah: [] },
+            { id: 'KLP-5002', nama_kelompok: 'Tonggara Slawi 2', hari_pkm: 'Kamis', nasabah: [] },
+            { id: 'KLP-5003', nama_kelompok: 'Tonggara 2', hari_pkm: 'Kamis', nasabah: [] },
+            { id: 'KLP-5004', nama_kelompok: 'Tonggara Manis', hari_pkm: 'Kamis', nasabah: [] },
+            { id: 'KLP-5005', nama_kelompok: 'Tonggara Manis 2', hari_pkm: 'Kamis', nasabah: [] },
+            { id: 'KLP-5006', nama_kelompok: 'Tonggara Split', hari_pkm: 'Kamis', nasabah: [] }
         ];
 
-        // State UI Variables
+        let mockData = JSON.parse(localStorage.getItem('mekaarDataV3')) || defaultData;
+        function saveData() { localStorage.setItem('mekaarDataV3', JSON.stringify(mockData)); }
+
         let activeDayFilter = 'Semua';
         let searchQuery = '';
         let selectedGroupData = null;
-        const days = ['Semua', 'Senin', 'Selasa', 'Rabu', 'Kamis'];
-        
-        // Helper Formatting
-        const formatRp = (angka) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(angka || 0);
-        const generateId = (prefix) => prefix + '-' + Math.floor(Math.random() * 10000);
+        let selectedCustomerId = null;
+        let modalActionType = '';
+        const days = ['Semua', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat'];
 
-        function initApp() {
+        const formatRp = (angka) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(angka || 0);
+        const generateId = (prefix) => prefix + '-' + Date.now().toString().slice(-4);
+
+        window.onload = () => {
             renderDayFilters();
             renderDashboard();
-
-            // Setup Real-time Search Listener
             document.getElementById('search-input').addEventListener('input', (e) => {
-                searchQuery = e.target.value;
+                searchQuery = e.target.value.toLowerCase();
                 renderDashboard();
             });
-        }
+        };
 
         function renderDayFilters() {
             const container = document.getElementById('day-filters');
-            container.innerHTML = '';
-            
-            days.forEach(day => {
-                const isActive = day === activeDayFilter;
-                const baseClass = "px-5 py-2.5 rounded-2xl text-sm font-semibold transition-all flex-shrink-0 cursor-pointer border-2";
-                const colorClass = isActive 
-                    ? "bg-corporate-600 text-white border-corporate-600 shadow-md" 
-                    : "bg-white text-gray-500 border-gray-200 hover:border-corporate-300";
-                
-                const btn = document.createElement('button');
-                btn.className = `${baseClass} ${colorClass}`;
-                btn.textContent = day;
-                btn.onclick = () => {
-                    activeDayFilter = day;
-                    renderDayFilters();
-                    renderDashboard();
-                };
-                container.appendChild(btn);
-            });
+            container.innerHTML = days.map(day => `
+                <button onclick="setFilter('${day}')" class="px-4 py-1.5 rounded-full text-sm font-semibold border whitespace-nowrap 
+                    ${day === activeDayFilter ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-slate-600'}">
+                    ${day}
+                </button>
+            `).join('');
+        }
+
+        function setFilter(day) {
+            activeDayFilter = day;
+            renderDayFilters();
+            renderDashboard();
         }
 
         function renderDashboard() {
             const container = document.getElementById('group-list-container');
-            container.innerHTML = '';
+            const filtered = mockData.filter(g => 
+                (activeDayFilter === 'Semua' || g.hari_pkm === activeDayFilter) &&
+                (g.nama_kelompok.toLowerCase().includes(searchQuery) || g.nasabah.some(n => n.nama.toLowerCase().includes(searchQuery)))
+            );
 
-            const filteredData = mockData.filter(group => {
-                const matchDay = activeDayFilter === 'Semua' || group.hari_pkm === activeDayFilter;
-                if (!matchDay) return false;
-                
-                const q = searchQuery.toLowerCase();
-                if (!q) return true;
-                
-                const matchGroup = group.nama_kelompok.toLowerCase().includes(q);
-                const matchCustomer = group.nasabah.some(n => n.nama.toLowerCase().includes(q));
-                return matchGroup || matchCustomer;
-            });
-
-            if (filteredData.length === 0) {
-                container.innerHTML = `
-                    <div class="text-center py-16 px-4">
-                        <div class="w-20 h-20 bg-gray-200 rounded-full flex items-center justify-center mx-auto mb-4 text-gray-400">
-                            <i class="fa-solid fa-folder-open text-3xl"></i>
-                        </div>
-                        <h3 class="text-gray-700 font-bold text-lg mb-1">Data Tidak Ditemukan</h3>
-                        <p class="text-sm text-gray-500">Coba gunakan kata kunci lain atau ubah filter hari PKM.</p>
-                    </div>`;
-                return;
-            }
-
-            filteredData.forEach(group => {
-                const totalPotensi = group.nasabah.reduce((sum, n) => sum + n.angsuran_wajib, 0);
-                const card = document.createElement('div');
-                
-                card.className = "bg-white p-4 rounded-3xl shadow-sm border border-gray-100 mb-4 active:scale-95 transition-transform cursor-pointer relative overflow-hidden group hover:border-corporate-300";
-                card.onclick = () => openTransaction(group.id);
-                
-                card.innerHTML = `
-                    <div class="absolute left-0 top-0 bottom-0 w-2 bg-corporate-500"></div>
-                    <div class="flex justify-between items-start ml-3">
-                        <div>
-                            <h3 class="font-bold text-gray-800 text-lg mb-1.5">${group.nama_kelompok}</h3>
-                            <div class="flex items-center gap-2">
-                                <span class="bg-corporate-50 text-corporate-700 text-xs font-bold px-2.5 py-1 rounded-lg border border-corporate-200">
-                                    <i class="fa-solid fa-calendar-day mr-1"></i> ${group.hari_pkm}
-                                </span>
-                                <span class="text-xs font-medium text-gray-500 bg-gray-50 px-2.5 py-1 rounded-lg border border-gray-200">
-                                    <i class="fa-solid fa-users mr-1"></i> ${group.nasabah.length} Nasabah
-                                </span>
-                            </div>
-                        </div>
-                        <div class="w-10 h-10 rounded-full bg-corporate-50 flex justify-center items-center text-corporate-500 group-hover:bg-corporate-600 group-hover:text-white transition-colors">
-                            <i class="fa-solid fa-chevron-right"></i>
-                        </div>
+            container.innerHTML = filtered.length ? filtered.map(g => {
+                const totalPotensi = g.nasabah.reduce((sum, n) => sum + n.angsuran_wajib, 0);
+                return `
+                <div onclick="openTransaction('${g.id}')" class="bg-white border p-4 rounded-lg mb-3 shadow-sm active:scale-95 transition-transform">
+                    <div class="flex justify-between items-center mb-2">
+                        <h3 class="font-bold text-lg">${g.nama_kelompok}</h3>
+                        <span class="text-blue-500"><i class="fa-solid fa-chevron-right"></i></span>
                     </div>
-                    <div class="mt-5 pt-4 border-t border-dashed border-gray-200 flex justify-between items-center ml-3">
-                        <span class="text-xs font-semibold text-gray-400 uppercase">Proyeksi Tagihan</span>
-                        <span class="text-base font-bold text-gray-800">${formatRp(totalPotensi)}</span>
+                    <div class="flex gap-3 text-xs text-slate-500">
+                        <span class="bg-slate-100 px-2 py-1 rounded"><i class="fa-solid fa-calendar mr-1"></i> ${g.hari_pkm}</span>
+                        <span class="bg-slate-100 px-2 py-1 rounded"><i class="fa-solid fa-users mr-1"></i> ${g.nasabah.length} Org</span>
+                        <span class="bg-slate-100 px-2 py-1 rounded font-bold"><i class="fa-solid fa-money-bill mr-1"></i> ${formatRp(totalPotensi)}</span>
                     </div>
-                `;
-                container.appendChild(card);
-            });
+                </div>
+                `
+            }).join('') : `<p class="text-center text-slate-400 mt-10">Data tidak ditemukan</p>`;
         }
 
         function openTransaction(groupId) {
             selectedGroupData = mockData.find(g => g.id === groupId);
-            if (!selectedGroupData) return;
-
             document.getElementById('tx-group-name').textContent = selectedGroupData.nama_kelompok;
             document.getElementById('tx-group-day').textContent = selectedGroupData.hari_pkm;
             
             renderTransactionForm();
-
-            // Animasi Pindah Layar
             document.getElementById('view-dashboard').classList.remove('active');
-            setTimeout(() => {
-                document.getElementById('view-dashboard').style.display = 'none';
-                document.getElementById('view-transaction').style.display = 'flex';
-                void document.getElementById('view-transaction').offsetWidth;
-                document.getElementById('view-transaction').classList.add('active');
-            }, 300);
+            document.getElementById('view-transaction').classList.add('active');
         }
 
         function closeTransaction() {
             document.getElementById('view-transaction').classList.remove('active');
-            setTimeout(() => {
-                document.getElementById('view-transaction').style.display = 'none';
-                document.getElementById('view-dashboard').style.display = 'flex';
-                void document.getElementById('view-dashboard').offsetWidth;
-                document.getElementById('view-dashboard').classList.add('active');
-                selectedGroupData = null;
-                // Render ulang dashboard untuk memperbarui data (jumlah nasabah/nama jika diedit)
-                renderDashboard();
-            }, 300);
+            document.getElementById('view-dashboard').classList.add('active');
+            selectedGroupData = null;
+            renderDashboard();
         }
 
         function renderTransactionForm() {
             const container = document.getElementById('tx-member-list');
-            container.innerHTML = '';
+            const options = ['1. Bayar', '2. par', '3. Belum Angsuran'];
 
-            selectedGroupData.nasabah.forEach((member, index) => {
-                const card = document.createElement('div');
-                card.className = "bg-white p-4.5 rounded-2xl shadow-sm border border-gray-200 mb-4";
-                
-                // Setoran Default sesuai angsuran wajib, KECUALI jika statusnya bukan Hadir
-                let defaultInput = member.angsuran_wajib;
-                if(member.status !== 'Hadir') defaultInput = 0;
+            container.innerHTML = selectedGroupData.nasabah.map((n, i) => {
+                let val = n.angsuran_wajib;
+                if (n.nominal_bayar !== undefined) {
+                    val = n.nominal_bayar;
+                } else if (n.status === '3. Belum Angsuran') {
+                    val = 0;
+                }
 
-                const statusOptions = ['Hadir', 'Izin', 'Sakit', 'Alpa'].map(st => 
-                    `<option value="${st}" ${member.status === st ? 'selected' : ''}>${st}</option>`
-                ).join('');
-
-                card.innerHTML = `
-                    <div class="flex justify-between items-start mb-3 border-b border-gray-100 pb-3">
-                        <div class="flex gap-3 w-full pr-2">
-                            <div class="w-8 h-8 flex-shrink-0 rounded-full bg-corporate-100 text-corporate-700 flex justify-center items-center font-bold text-sm">
-                                ${index + 1}
-                            </div>
-                            <div class="flex-1">
-                                <div class="flex justify-between items-center w-full">
-                                    <h4 class="font-bold text-gray-800 leading-tight">${member.nama}</h4>
-                                    <button onclick="openEditCustomerModal('${member.id}')" class="text-corporate-500 bg-corporate-50 hover:bg-corporate-100 w-7 h-7 rounded-full flex justify-center items-center transition" title="Edit Profil Nasabah">
-                                        <i class="fa-solid fa-pen text-[10px]"></i>
-                                    </button>
-                                </div>
-                                <p class="text-[10px] text-gray-400 font-mono mt-0.5 mb-1.5">ID: ${member.id}</p>
-                                ${member.catatan ? `<p class="text-[11px] text-gray-500 bg-gray-50 p-2 rounded-md border border-gray-100 italic leading-snug"><i class="fa-solid fa-note-sticky text-gray-400 mr-1"></i> ${member.catatan}</p>` : ''}
-                            </div>
+                return `
+                <div class="bg-white border p-4 rounded-lg mb-3 shadow-sm">
+                    <div class="flex justify-between items-start mb-3">
+                        <div>
+                            <h4 class="font-bold">${i+1}. ${n.nama}</h4>
+                            <p class="text-[10px] text-slate-400">Wajib: ${formatRp(n.angsuran_wajib)}</p>
+                        </div>
+                        <div class="flex gap-2">
+                            <button onclick="openEditCustomerModal('${n.id}')" class="text-blue-500"><i class="fa-solid fa-pen"></i></button>
+                            <button onclick="confirmDeleteCustomer('${n.id}')" class="text-red-500"><i class="fa-solid fa-trash"></i></button>
                         </div>
                     </div>
-
-                    <div class="grid grid-cols-5 gap-3 items-end">
-                        <div class="col-span-2">
-                            <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Status Kehadiran</label>
-                            <div class="relative">
-                                <select class="status-dropdown w-full bg-gray-50 border border-gray-300 rounded-xl px-3 py-2.5 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-corporate-500 appearance-none" data-id="${member.id}">
-                                    ${statusOptions}
-                                </select>
-                                <i class="fa-solid fa-chevron-down absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-xs pointer-events-none"></i>
-                            </div>
-                        </div>
-                        <div class="col-span-3">
-                            <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1 flex justify-between">
-                                Setoran (Rp) <span class="text-[9px] text-corporate-500 font-normal">Wajib: ${formatRp(member.angsuran_wajib)}</span>
-                            </label>
-                            <input type="number" class="nominal-input w-full bg-gray-50 border border-gray-300 rounded-xl px-3 py-2.5 text-sm font-bold text-gray-800 focus:outline-none focus:ring-2 focus:ring-corporate-500 transition" value="${defaultInput}" min="0">
-                        </div>
+                    <div class="flex gap-2">
+                        <select onchange="updateMemberData('${n.id}', 'status', this.value)" class="w-1/2 bg-slate-50 border rounded p-2 text-sm font-semibold">
+                            ${options.map(opt => `<option value="${opt}" ${n.status === opt ? 'selected' : ''}>${opt}</option>`).join('')}
+                        </select>
+                        <input type="number" oninput="updateMemberData('${n.id}', 'nominal', this.value)" id="nom-${n.id}" value="${val}" class="w-1/2 bg-slate-50 border rounded p-2 text-sm font-bold">
                     </div>
+                </div>
                 `;
-                container.appendChild(card);
-            });
+            }).join('');
+            
+            calculateTotal();
+        }
 
-            // Bind Event Listeners untuk Input Nominal & Dropdown Status
-            const nominalInputs = document.querySelectorAll('.nominal-input');
-            nominalInputs.forEach(input => {
-                input.addEventListener('input', calculateTotal);
-            });
+        function updateMemberData(id, type, value) {
+            const member = selectedGroupData.nasabah.find(n => n.id === id);
+            const inputEl = document.getElementById(`nom-${id}`);
 
-            const statusDropdowns = document.querySelectorAll('.status-dropdown');
-            statusDropdowns.forEach(dropdown => {
-                dropdown.addEventListener('change', (e) => {
-                    const row = e.target.closest('.grid');
-                    const nominalInput = row.querySelector('.nominal-input');
-                    // Jika status bukan Hadir, set nominal 0 sementara
-                    if(e.target.value !== 'Hadir') {
-                        nominalInput.value = 0;
-                    } else {
-                        // Cari data original nasabah untuk kembalikan nominal default
-                        const nasabahId = e.target.getAttribute('data-id');
-                        const ns = selectedGroupData.nasabah.find(n => n.id === nasabahId);
-                        if(ns) nominalInput.value = ns.angsuran_wajib;
-                    }
-                    calculateTotal();
-                });
-            });
-
+            if(type === 'status') {
+                member.status = value;
+                if(value === '3. Belum Angsuran') {
+                    inputEl.value = 0;
+                    member.nominal_bayar = 0;
+                } else if (value === '1. Bayar') {
+                    inputEl.value = member.angsuran_wajib;
+                    member.nominal_bayar = member.angsuran_wajib;
+                }
+            } else if (type === 'nominal') {
+                member.nominal_bayar = parseInt(value) || 0;
+            }
+            
+            saveData();
             calculateTotal();
         }
 
         function calculateTotal() {
-            const inputs = document.querySelectorAll('.nominal-input');
             let total = 0;
-            inputs.forEach(input => {
-                const val = parseInt(input.value) || 0;
-                total += val;
+            document.querySelectorAll('input[id^="nom-"]').forEach(input => {
+                total += parseInt(input.value) || 0;
             });
             document.getElementById('tx-total-collected').textContent = formatRp(total);
         }
 
-        // --- Modal System Core ---
-        function openModal(modalId) {
-            const modal = document.getElementById(modalId);
-            const content = document.getElementById(`${modalId}-content`);
-            modal.classList.remove('opacity-0', 'pointer-events-none');
-            modal.classList.add('opacity-100');
-            setTimeout(() => {
-                content.classList.remove('scale-95');
-                content.classList.add('scale-100');
-            }, 10);
-        }
-
-        function closeModal(modalId) {
-            const modal = document.getElementById(modalId);
-            const content = document.getElementById(`${modalId}-content`);
-            content.classList.remove('scale-100');
-            content.classList.add('scale-95');
-            setTimeout(() => {
-                modal.classList.add('opacity-0', 'pointer-events-none');
-                modal.classList.remove('opacity-100');
-            }, 200);
-        }
-
-        // --- Fitur 1: Edit Nama Kelompok ---
-        function openEditNameModal() {
-            if (!selectedGroupData) return;
-            document.getElementById('input-edit-group').value = selectedGroupData.nama_kelompok;
-            openModal('modal-edit-group');
-            setTimeout(() => document.getElementById('input-edit-group').focus(), 300);
-        }
-
-        function saveGroupName() {
-            const newName = document.getElementById('input-edit-group').value.trim();
-            if (!newName) return;
+        function openModal(title, bodyHTML, actionType, btnText = "Simpan", btnColor = "bg-blue-600") {
+            document.getElementById('modal-title').textContent = title;
+            document.getElementById('modal-body').innerHTML = bodyHTML;
+            const actionBtn = document.getElementById('modal-action-btn');
             
-            selectedGroupData.nama_kelompok = newName;
-            document.getElementById('tx-group-name').textContent = newName;
-            closeModal('modal-edit-group');
-        }
-
-        // --- Fitur 2: Edit Nasabah ---
-        function openEditCustomerModal(customerId) {
-            const customer = selectedGroupData.nasabah.find(n => n.id === customerId);
-            if(!customer) return;
-
-            document.getElementById('input-edit-customer-id').value = customer.id;
-            document.getElementById('input-edit-customer-name').value = customer.nama;
-            document.getElementById('input-edit-customer-notes').value = customer.catatan || '';
+            actionBtn.textContent = btnText;
+            actionBtn.className = `flex-1 text-white font-bold py-2.5 rounded-lg ${btnColor}`;
             
-            openModal('modal-edit-customer');
-        }
-
-        function saveCustomerData() {
-            const id = document.getElementById('input-edit-customer-id').value;
-            const newName = document.getElementById('input-edit-customer-name').value.trim();
-            const newNotes = document.getElementById('input-edit-customer-notes').value.trim();
-
-            if (!newName) return;
-
-            const customerIndex = selectedGroupData.nasabah.findIndex(n => n.id === id);
-            if (customerIndex > -1) {
-                selectedGroupData.nasabah[customerIndex].nama = newName;
-                selectedGroupData.nasabah[customerIndex].catatan = newNotes;
-            }
-
-            closeModal('modal-edit-customer');
+            modalActionType = actionType;
+            actionBtn.onclick = executeModalAction;
             
-            // Re-render form untuk mengupdate UI
-            // Simpan status input saat ini agar tidak hilang saat re-render
-            setTimeout(() => renderTransactionForm(), 250); 
+            document.getElementById('modal-container').classList.remove('hidden');
         }
 
-        // --- Fitur 3: Tambah Nasabah ---
-        function openAddCustomerModal() {
-            document.getElementById('input-add-name').value = '';
-            document.getElementById('input-add-nominal').value = '';
-            document.getElementById('input-add-notes').value = '';
-            openModal('modal-add-customer');
-            setTimeout(() => document.getElementById('input-add-name').focus(), 300);
+        function closeModal() {
+            document.getElementById('modal-container').classList.add('hidden');
+            modalActionType = '';
         }
 
-        function saveNewCustomer() {
-            const name = document.getElementById('input-add-name').value.trim();
-            const nominal = parseInt(document.getElementById('input-add-nominal').value) || 0;
-            const notes = document.getElementById('input-add-notes').value.trim();
-
-            if (!name || nominal <= 0) {
-                // Secara sederhana beri visual penolakan atau fokuskan
-                document.getElementById('input-add-name').focus();
-                return;
-            }
-
-            const newNasabah = {
-                id: generateId('N'),
-                nama: name,
-                angsuran_wajib: nominal,
-                catatan: notes,
-                status: 'Hadir'
-            };
-
-            selectedGroupData.nasabah.push(newNasabah);
-            
-            closeModal('modal-add-customer');
-            setTimeout(() => renderTransactionForm(), 250);
-        }
-
-        // --- Fitur 5: Tambah Kelompok Baru ---
         function openAddGroupModal() {
-            document.getElementById('input-add-group-name').value = '';
-            document.getElementById('input-add-group-day').value = 'Senin';
-            openModal('modal-add-group');
-            setTimeout(() => document.getElementById('input-add-group-name').focus(), 300);
+            const html = `
+                <input type="text" id="inp-grp-name" placeholder="Nama Kelompok" class="w-full border rounded p-2 mb-3">
+                <select id="inp-grp-day" class="w-full border rounded p-2">
+                    ${days.filter(d => d !== 'Semua').map(d => `<option value="${d}">${d}</option>`).join('')}
+                </select>
+            `;
+            openModal('Tambah Kelompok', html, 'ADD_GROUP');
         }
 
-        function saveNewGroup() {
-            const name = document.getElementById('input-add-group-name').value.trim();
-            const day = document.getElementById('input-add-group-day').value;
+        function openEditNameModal() {
+            const html = `<input type="text" id="inp-grp-name" value="${selectedGroupData.nama_kelompok}" class="w-full border rounded p-2">`;
+            openModal('Ubah Nama', html, 'EDIT_GROUP');
+        }
 
-            if (!name) {
-                document.getElementById('input-add-group-name').focus();
+        function confirmDeleteGroup() {
+            openModal('Hapus Kelompok?', '<p class="text-sm text-slate-500">Semua data nasabah di kelompok ini akan terhapus.</p>', 'DEL_GROUP', 'Ya, Hapus', 'bg-red-600');
+        }
+
+        function openAddCustomerModal() {
+            const html = `
+                <input type="text" id="inp-cus-name" placeholder="Nama Nasabah" class="w-full border rounded p-2 mb-3">
+                <input type="number" id="inp-cus-nom" placeholder="Angsuran Wajib (Rp)" class="w-full border rounded p-2">
+            `;
+            openModal('Tambah Nasabah', html, 'ADD_CUSTOMER');
+        }
+
+        function openEditCustomerModal(id) {
+            selectedCustomerId = id;
+            const c = selectedGroupData.nasabah.find(n => n.id === id);
+            const html = `
+                <input type="text" id="inp-cus-name" value="${c.nama}" class="w-full border rounded p-2 mb-3">
+                <input type="number" id="inp-cus-nom" value="${c.angsuran_wajib}" placeholder="Angsuran Wajib (Rp)" class="w-full border rounded p-2">
+            `;
+            openModal('Edit Nasabah', html, 'EDIT_CUSTOMER');
+        }
+
+        function confirmDeleteCustomer(id) {
+            selectedCustomerId = id;
+            openModal('Hapus Nasabah?', '<p class="text-sm text-slate-500">Yakin ingin menghapus nasabah ini?</p>', 'DEL_CUSTOMER', 'Hapus', 'bg-red-600');
+        }
+
+        function saveTransaction() {
+            saveData();
+            openModal('Tersimpan!', '<p class="text-center text-green-600 text-4xl"><i class="fa-solid fa-check-circle"></i></p>', 'CLOSE_TX');
+        }
+
+        function executeModalAction() {
+            if (modalActionType === 'ADD_GROUP') {
+                const name = document.getElementById('inp-grp-name').value;
+                if(!name) return;
+                mockData.unshift({ id: generateId('KLP'), nama_kelompok: name, hari_pkm: document.getElementById('inp-grp-day').value, nasabah: [] });
+                setFilter(document.getElementById('inp-grp-day').value);
+            } 
+            else if (modalActionType === 'EDIT_GROUP') {
+                selectedGroupData.nama_kelompok = document.getElementById('inp-grp-name').value;
+                document.getElementById('tx-group-name').textContent = selectedGroupData.nama_kelompok;
+            }
+            else if (modalActionType === 'DEL_GROUP') {
+                mockData = mockData.filter(g => g.id !== selectedGroupData.id);
+                closeTransaction();
+            }
+            else if (modalActionType === 'ADD_CUSTOMER') {
+                const name = document.getElementById('inp-cus-name').value;
+                const nom = document.getElementById('inp-cus-nom').value;
+                if(!name) return;
+                selectedGroupData.nasabah.push({ id: generateId('N'), nama: name, angsuran_wajib: parseInt(nom)||0, nominal_bayar: parseInt(nom)||0, status: '1. Bayar' });
+                renderTransactionForm();
+            }
+            else if (modalActionType === 'EDIT_CUSTOMER') {
+                const c = selectedGroupData.nasabah.find(n => n.id === selectedCustomerId);
+                c.nama = document.getElementById('inp-cus-name').value;
+                const wajibBaru = parseInt(document.getElementById('inp-cus-nom').value) || 0;
+                c.angsuran_wajib = wajibBaru;
+                if(c.status === '1. Bayar') c.nominal_bayar = wajibBaru;
+                renderTransactionForm();
+            }
+            else if (modalActionType === 'DEL_CUSTOMER') {
+                selectedGroupData.nasabah = selectedGroupData.nasabah.filter(n => n.id !== selectedCustomerId);
+                renderTransactionForm();
+            }
+            else if (modalActionType === 'CLOSE_TX') {
+                closeModal();
+                closeTransaction();
                 return;
             }
 
-            const newGroup = {
-                id: generateId('KLP'),
-                nama_kelompok: name,
-                hari_pkm: day,
-                nasabah: []
-            };
-
-            // Masukkan kelompok ke urutan awal atau akhir
-            mockData.unshift(newGroup); 
-            
-            closeModal('modal-add-group');
-            
-            // Pindahkan filter ke hari kelompok baru dan render ulang dashboard
-            activeDayFilter = day;
-            renderDayFilters();
-            setTimeout(() => renderDashboard(), 250);
+            saveData();
+            if(modalActionType.includes('GROUP')) renderDashboard();
+            closeModal();
         }
-
-        // --- Fitur 4: Simpan Transaksi ---
-        function saveTransaction() {
-            // Di sistem nyata, data input akan dibaca dan dikirim ke API
-            openModal('modal-success');
-        }
-
-        function closeSuccessAlert() {
-            closeModal('modal-success');
-            setTimeout(() => closeTransaction(), 300);
-        }
-
-        // Jalankan Inisialisasi
-        window.onload = initApp;
     </script>
 </body>
 </html>
