@@ -24,18 +24,12 @@
         <section id="view-dashboard" class="view-section active flex-col h-full w-full">
             
             <!-- Header -->
-            <header class="bg-blue-600 text-white p-5">
-                <div class="flex justify-between items-center mb-4">
-                    <div>
-                        <h1 class="text-xl font-bold">Yobell</h1>
-                        <p class="text-xs text-blue-200">Data Kelompok</p>
-                    </div>
-                    <i class="fa-solid fa-user-circle text-3xl"></i>
+            <header class="bg-blue-600 text-white p-5 flex justify-between items-center">
+                <div>
+                    <h1 class="text-xl font-bold">Ao11-91409</h1>
+                    <p class="text-xs text-blue-200">robi rizal muttaqin</p>
                 </div>
-                <div class="relative">
-                    <i class="fa-solid fa-search absolute left-3 top-3 text-slate-400"></i>
-                    <input type="text" id="search-input" placeholder="Cari Kelompok / Nasabah..." class="w-full bg-white text-slate-800 rounded-lg py-2.5 pl-10 pr-4 text-sm focus:outline-none">
-                </div>
+                <i class="fa-solid fa-user-circle text-3xl"></i>
             </header>
 
             <!-- Filter Chips -->
@@ -72,6 +66,14 @@
                 </div>
             </header>
 
+            <!-- Search Nasabah inside Group -->
+            <div class="p-3 bg-white border-b">
+                <div class="relative">
+                    <i class="fa-solid fa-search absolute left-3 top-3 text-slate-400 text-sm"></i>
+                    <input type="text" id="tx-search-input" placeholder="Cari nama nasabah di kelompok ini..." class="w-full bg-slate-100 text-slate-800 rounded-lg py-2 pl-9 pr-4 text-sm focus:outline-none">
+                </div>
+            </div>
+
             <!-- Total Bar -->
             <div class="bg-slate-800 text-white p-4 flex justify-between items-center">
                 <span class="text-sm font-semibold">Total Terkumpul</span>
@@ -89,7 +91,7 @@
             <!-- Sticky Save Button -->
             <div class="absolute bottom-0 w-full bg-white border-t p-4">
                 <button onclick="saveTransaction()" class="w-full bg-blue-600 text-white font-bold py-3 rounded-lg active:bg-blue-700">
-                    Simpan Data
+                    Simpan 
                 </button>
             </div>
         </section>
@@ -111,86 +113,13 @@
 
     <!-- JAVASCRIPT LOGIC -->
     <script>
-        const defaultData = [
-            {
-                id: 'KLP-9999', nama_kelompok: 'KDBG putat 2', hari_pkm: 'Senin',
-                nasabah: [
-                    { id: 'N-901', nama: 'DAILAH BINTI RUSWAD', angsuran_wajib: 191000, catatan: '', status: '1. Bayar' },
-                    { id: 'N-902', nama: 'WIWI LISTIYANA BINTI SUHANA', angsuran_wajib: 10000, catatan: '', status: '1. Bayar' },
-                    { id: 'N-903', nama: 'NOKTITI BINTI KASMUDI', angsuran_wajib: 150000, catatan: '', status: '1. Bayar' },
-                    { id: 'N-904', nama: 'ENI MASRUROH BINTI SARKO', angsuran_wajib: 215000, catatan: '', status: '1. Bayar' },
-                    { id: 'N-905', nama: 'SITI QOMARIYAH BINTI DARYONO', angsuran_wajib: 825000, catatan: '', status: '1. Bayar' },
-                    { id: 'N-906', nama: 'WARNINGSIH BINTI DARYONO', angsuran_wajib: 125000, catatan: '', status: '1. Bayar' },
-                    { id: 'N-907', nama: 'NURIAH BINTI CARIWAN', angsuran_wajib: 30000, catatan: '', status: '1. Bayar' },
-                    { id: 'N-908', nama: 'MUNETI BINTI TURWAN', angsuran_wajib: 0, catatan: '', status: '1. Bayar' },
-                    { id: 'N-909', nama: 'NURITAH BINTI TARWIN', angsuran_wajib: 238000, catatan: '', status: '1. Bayar' },
-                    { id: 'N-910', nama: 'SRI MULYATI BINTI SUTARMO', angsuran_wajib: 75000, catatan: '', status: '1. Bayar' },
-                    { id: 'N-911', nama: 'SUARTI BINTI SUKYAD', angsuran_wajib: 0, catatan: '', status: '1. Bayar' },
-                    { id: 'N-912', nama: 'WANITAH BINTI FATKHURI', angsuran_wajib: 191000, catatan: '', status: '1. Bayar' },
-                    { id: 'N-913', nama: 'SANIPAH BINTI DARMAD', angsuran_wajib: 215000, catatan: '', status: '1. Bayar' },
-                    { id: 'N-914', nama: 'SUSIYATI BINTI JAETUN', angsuran_wajib: 10100, catatan: '', status: '1. Bayar' },
-                    { id: 'N-915', nama: 'KOMISAH BINTI KASTARI', angsuran_wajib: 243000, catatan: '', status: '1. Bayar' },
-                    { id: 'N-916', nama: 'KOIMAH BINTI RASBIN', angsuran_wajib: 191000, catatan: '', status: '1. Bayar' },
-                    { id: 'N-917', nama: 'WAITOH BINTI SAHID', angsuran_wajib: 191000, catatan: '', status: '1. Bayar' },
-                    { id: 'N-918', nama: 'WAHYUNI YUNI WIDIYANTI BINTI ROBIN', angsuran_wajib: 191000, catatan: '', status: '1. Bayar' },
-                    { id: 'N-919', nama: 'KAMILAH BINTI SAHID', angsuran_wajib: 175000, catatan: '', status: '1. Bayar' },
-                    { id: 'N-920', nama: 'KASTIMAH BINTI SUPRIADI', angsuran_wajib: 175000, catatan: '', status: '1. Bayar' }
-                ]
-            },
-            {
-                id: 'KLP-1001', nama_kelompok: 'KDBG putat 3', hari_pkm: 'Senin',
-                nasabah: [
-                    { id: 'N-101', nama: 'Siti Aminah', angsuran_wajib: 50000, catatan: 'Ibu penjual gorengan pinggir jalan.', status: '1. Bayar' },
-                    { id: 'N-102', nama: 'Nurhayati', angsuran_wajib: 50000, catatan: '', status: '1. Bayar' },
-                    { id: 'N-103', nama: 'Karsini', angsuran_wajib: 75000, catatan: 'Rumah cat hijau dekat masjid.', status: '1. Bayar' },
-                ]
-            },
-            {
-                id: 'KLP-1002', nama_kelompok: 'KDBG putat', hari_pkm: 'Senin',
-                nasabah: [
-                    { id: 'N-201', nama: 'Budiarti', angsuran_wajib: 100000, catatan: '.', status: '1. Bayar' },
-                    { id: 'N-202', nama: 'Sumiati', angsuran_wajib: 50000, catatan: '', status: '2. par' },
-                ]
-            },
-            { id: 'KLP-1003', nama_kelompok: 'karang lo 2', hari_pkm: 'Senin', nasabah: [] },
-            { id: 'KLP-1004', nama_kelompok: 'KDBG mda', hari_pkm: 'Senin', nasabah: [] },
-            { id: 'KLP-1005', nama_kelompok: 'Kdbg MDA 2', hari_pkm: 'Senin', nasabah: [] },
-            {
-                id: 'KLP-2001', nama_kelompok: 'KARANG LO', hari_pkm: 'Senin',
-                nasabah: [
-                    { id: 'N-301', nama: 'Ratna', angsuran_wajib: 60000, catatan: 'Sering lupa bawa buku tabungan.', status: '1. Bayar' },
-                    { id: 'N-302', nama: 'Desi', angsuran_wajib: 60000, catatan: '', status: '1. Bayar' },
-                ]
-            },
-            {
-                id: 'KLP-3001', nama_kelompok: 'Anggrek Bulan', hari_pkm: 'Rabu',
-                nasabah: [
-                    { id: 'N-401', nama: 'Wati', angsuran_wajib: 150000, catatan: 'Ketua Kelompok yang tegas.', status: '1. Bayar' },
-                    { id: 'N-402', nama: 'Rina', angsuran_wajib: 150000, catatan: '', status: '3. Belum Angsuran' },
-                ]
-            },
-            {
-                id: 'KLP-4001', nama_kelompok: 'Teratai Mekar', hari_pkm: 'Kamis',
-                nasabah: [
-                    { id: 'N-501', nama: 'Juminten', angsuran_wajib: 40000, catatan: '', status: '1. Bayar' },
-                    { id: 'N-502', nama: 'Tuminah', angsuran_wajib: 40000, catatan: 'Ibu pembuat tempe.', status: '1. Bayar' },
-                    { id: 'N-503', nama: 'Suparti', angsuran_wajib: 80000, catatan: '', status: '3. Belum Angsuran' },
-                ]
-            },
-            // Kelompok Baru Hari Kamis
-            { id: 'KLP-5001', nama_kelompok: 'Tonggara Slawi', hari_pkm: 'Kamis', nasabah: [] },
-            { id: 'KLP-5002', nama_kelompok: 'Tonggara Slawi 2', hari_pkm: 'Kamis', nasabah: [] },
-            { id: 'KLP-5003', nama_kelompok: 'Tonggara 2', hari_pkm: 'Kamis', nasabah: [] },
-            { id: 'KLP-5004', nama_kelompok: 'Tonggara Manis', hari_pkm: 'Kamis', nasabah: [] },
-            { id: 'KLP-5005', nama_kelompok: 'Tonggara Manis 2', hari_pkm: 'Kamis', nasabah: [] },
-            { id: 'KLP-5006', nama_kelompok: 'Tonggara Split', hari_pkm: 'Kamis', nasabah: [] }
-        ];
+        const defaultData = [];
 
-        let mockData = JSON.parse(localStorage.getItem('mekaarDataV3')) || defaultData;
-        function saveData() { localStorage.setItem('mekaarDataV3', JSON.stringify(mockData)); }
+        let mockData = JSON.parse(localStorage.getItem('mekaarDataV6')) || defaultData;
+        function saveData() { localStorage.setItem('mekaarDataV6', JSON.stringify(mockData)); }
 
         let activeDayFilter = 'Semua';
-        let searchQuery = '';
+        let txSearchQuery = '';
         let selectedGroupData = null;
         let selectedCustomerId = null;
         let modalActionType = '';
@@ -202,9 +131,11 @@
         window.onload = () => {
             renderDayFilters();
             renderDashboard();
-            document.getElementById('search-input').addEventListener('input', (e) => {
-                searchQuery = e.target.value.toLowerCase();
-                renderDashboard();
+
+            // Event listener untuk pencarian nasabah di dalam kelompok
+            document.getElementById('tx-search-input').addEventListener('input', (e) => {
+                txSearchQuery = e.target.value.toLowerCase();
+                renderTransactionForm();
             });
         };
 
@@ -227,8 +158,7 @@
         function renderDashboard() {
             const container = document.getElementById('group-list-container');
             const filtered = mockData.filter(g => 
-                (activeDayFilter === 'Semua' || g.hari_pkm === activeDayFilter) &&
-                (g.nama_kelompok.toLowerCase().includes(searchQuery) || g.nasabah.some(n => n.nama.toLowerCase().includes(searchQuery)))
+                (activeDayFilter === 'Semua' || g.hari_pkm === activeDayFilter)
             );
 
             container.innerHTML = filtered.length ? filtered.map(g => {
@@ -246,7 +176,7 @@
                     </div>
                 </div>
                 `
-            }).join('') : `<p class="text-center text-slate-400 mt-10">Data tidak ditemukan</p>`;
+            }).join('') : `<p class="text-center text-slate-400 mt-10">Data kelompok tidak ditemukan</p>`;
         }
 
         function openTransaction(groupId) {
@@ -254,6 +184,10 @@
             document.getElementById('tx-group-name').textContent = selectedGroupData.nama_kelompok;
             document.getElementById('tx-group-day').textContent = selectedGroupData.hari_pkm;
             
+            // Reset pencarian dalam kelompok
+            txSearchQuery = '';
+            document.getElementById('tx-search-input').value = '';
+
             renderTransactionForm();
             document.getElementById('view-dashboard').classList.remove('active');
             document.getElementById('view-transaction').classList.add('active');
@@ -268,13 +202,18 @@
 
         function renderTransactionForm() {
             const container = document.getElementById('tx-member-list');
-            const options = ['1. Bayar', '2. par', '3. Belum Angsuran'];
+            const options = ['1. Bayar', '2. par', '3. Belum Angsuran', '4. mekar plus'];
 
-            container.innerHTML = selectedGroupData.nasabah.map((n, i) => {
+            const filteredNasabah = selectedGroupData.nasabah.filter(n => 
+                n.nama.toLowerCase().includes(txSearchQuery)
+            );
+
+            container.innerHTML = filteredNasabah.length ? filteredNasabah.map((n) => {
+                const originalIndex = selectedGroupData.nasabah.indexOf(n);
                 let val = n.angsuran_wajib;
                 if (n.nominal_bayar !== undefined) {
                     val = n.nominal_bayar;
-                } else if (n.status === '3. Belum Angsuran') {
+                } else if (n.status === '3. Belum Angsuran' || n.status === '4.mekar plus') {
                     val = 0;
                 }
 
@@ -282,7 +221,7 @@
                 <div class="bg-white border p-4 rounded-lg mb-3 shadow-sm">
                     <div class="flex justify-between items-start mb-3">
                         <div>
-                            <h4 class="font-bold">${i+1}. ${n.nama}</h4>
+                            <h4 class="font-bold">${originalIndex + 1}. ${n.nama}</h4>
                             <p class="text-[10px] text-slate-400">Wajib: ${formatRp(n.angsuran_wajib)}</p>
                         </div>
                         <div class="flex gap-2">
@@ -298,7 +237,7 @@
                     </div>
                 </div>
                 `;
-            }).join('');
+            }).join('') : `<p class="text-center text-slate-400 mt-6">Nasabah tidak ditemukan</p>`;
             
             calculateTotal();
         }
@@ -309,11 +248,11 @@
 
             if(type === 'status') {
                 member.status = value;
-                if(value === '3. Belum Angsuran') {
-                    inputEl.value = 0;
+                if(value === '3. Belum Angsuran' || value === 'mekar plus') {
+                    if (inputEl) inputEl.value = 0;
                     member.nominal_bayar = 0;
                 } else if (value === '1. Bayar') {
-                    inputEl.value = member.angsuran_wajib;
+                    if (inputEl) inputEl.value = member.angsuran_wajib;
                     member.nominal_bayar = member.angsuran_wajib;
                 }
             } else if (type === 'nominal') {
@@ -326,8 +265,9 @@
 
         function calculateTotal() {
             let total = 0;
-            document.querySelectorAll('input[id^="nom-"]').forEach(input => {
-                total += parseInt(input.value) || 0;
+            selectedGroupData.nasabah.forEach(n => {
+                let val = n.nominal_bayar !== undefined ? n.nominal_bayar : (n.status === '3. Belum Angsuran' || n.status === 'mekar plus' ? 0 : n.angsuran_wajib);
+                total += parseInt(val) || 0;
             });
             document.getElementById('tx-total-collected').textContent = formatRp(total);
         }
